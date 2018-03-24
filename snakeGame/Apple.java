@@ -17,28 +17,14 @@ public class Apple extends Entity{
 	}
 
 	public Apple(Point point){
-		super('', new Point(point), -1, 0, -1);
+		super("Apple", '', new Point(point), true, -1, 0, -1);
 		super.setExist(false);
-		//this.position = new Point(point);
 	}
 
-	public boolean upkeep(Game field){
-		action(field);
-		return false;
-	}
-
-	public boolean action(Game field){
-		//Its action is to move to correct location and spawn if it does not exist
-		if(!super.getExist())	//if the apple is not-existing
-			if(!spawn(field.toEntitySpace()))	//Something is awrong with spawning
-				return false;
-		return true;
-	}
-
-	public boolean spawn(Entity[][] space){
+	public boolean spawn(Game game){
 		//Moves apple to "vaid" location then makes apple exist again
 		ArrayList<Entity> validSpace = new ArrayList<Entity>();
-		for(Entity[] manyE: space)
+		for(Entity[] manyE: game.toEntitySpace())
 			for(Entity e: manyE)
 				if(e.getPrecedence() <= super.getPrecedence())	//Can spawn without dying
 					validSpace.add(e);
@@ -49,7 +35,19 @@ public class Apple extends Entity{
 			return false;
 		super.setPoint(new Point(validSpace.get(3).getPoint()));	//move apple
 		return true;
+	}
 
+	public boolean upkeep(Game game){
+		//Its action is to move to correct location and spawn if it does not exist
+		if(!super.getExist())	//if the apple is not-existing
+			if(!spawn(game))	//Something is awrong with spawning
+				return false;
+		return true;
+	}
+
+	public boolean action(Game game){
+		//Does nothing;
+		return true;
 	}
 
 }

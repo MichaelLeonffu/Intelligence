@@ -2,36 +2,30 @@
 *	@author Michael Leonffu
 *	@version 03-22-2018
 *
-*	Empty game! 
+*	Empty game!
+*	Empty does nothing! It's an entity, doesn't move.
 *
 */
 
 public class Empty extends Entity{
 	public final char SYMBOL_EMPTY = '□';
 
-	// public Empty(){
-	// 	super('□', new Point());
-	// }
-
 	public Empty(Point point){
-		super(' ', new Point(point), -2, -2, -1);
-		//this.position = new Point(point);
+		super("Empty", ' ', new Point(point), false, -2, -2, -1);
 	}
 
-	public boolean upkeep(Game field){
+	public boolean spawn(Game game){
+		//do nothing
+		return true;
+	}
+
+	public boolean upkeep(Game game){
 		//take no action
 		return true;
 	}
 
-	public boolean action(Game field){
+	public boolean action(Game game){
 		//take no action
-		return true;
-	}
-
-	public boolean setExist(boolean newExist){
-		if(super.getExist() == newExist)
-			return false; //nothing changed
-		super.setExist(true);	//ALWAYS EXSISTS;
 		return true;
 	}
 
