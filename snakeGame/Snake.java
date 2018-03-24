@@ -13,9 +13,9 @@ public class Snake extends Entity{
 	public final char SYMBOL_HEAD = 's';
 	public final char SYMBOL_TAIL = 't';
 
-	// public Snake(){
-	// 	super('s', new Point());
-	// }
+	public Snake(){
+		this(new Point());
+	}
 
 	public Snake(Point point){
 		super('s', new Point(point), 0, 1, 0);
@@ -37,10 +37,10 @@ public class Snake extends Entity{
 		return true;
 	}
 
-	public boolean spawn(Entity[][] space){
+	public boolean spawn(Game game){
 		//Moves apple to "vaid" location then makes apple exist again
 		ArrayList<Entity> validSpace = new ArrayList<Entity>();
-		for(Entity[] manyE: space)
+		for(Entity[] manyE: game.toEntitySpace())
 			for(Entity e: manyE)
 				if(e.getPrecedence() <= super.getPrecedence())	//Can spawn without dying
 					validSpace.add(e);
@@ -49,7 +49,7 @@ public class Snake extends Entity{
 		Collections.shuffle(validSpace);
 		if(!super.setExist(true))	//if the method returns false that means an apple exists and there is a problem
 			return false;
-		super.setPoint(new Point(validSpace.get(3).getPoint()));	//move apple
+		super.setPoint(new Point(validSpace.get(0).getPoint()));	//move apple
 		return true;
 
 	}
