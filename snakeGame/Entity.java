@@ -8,20 +8,33 @@
 */
 
 public abstract class Entity{
+	//Identification
+	private String name;		//Name of the entity; entities with same behavoir should be same name.
 	private char symbol;		//Each entity has a symbol
 	private Point point;		//Each entity has a position
+	//Behavoirs/propertys
+	private boolean animate;	//Does this entity every move? (Does not change.)
 	private int precedence;		//Higher precedence means that it'll "destory" low precedence
 	private int view;			//Higher views will be shown over low views on the poistion 
+	//Situations
 	private int fitness;		//Each entity has a fitness; -1 for N/A
 	private boolean exist;		//If the entiity is existing;
 
-	public Entity(char symbol, Point point, int precedence, int view, int fitness){
+	public Entity(String name, char symbol, Point point, boolean animate, int precedence, int view, int fitness){
+		this.name = name;					//Optional DEFAULT: "DEFAULT_NAME"
 		this.symbol = symbol;				//Required
 		this.point = new Point(point);		//Required (even if abritrary)
+		
+		this.animate = animate;				//Optional DEFAULT: true
 		this.precedence = precedence;		//Required
 		this.view = view;					//Required
-		this.fitness = fitness;				//Optional?
-		this.exist = true;					//Optional?
+		
+		this.fitness = fitness;				//Optional? DEFAULT: ???????
+		this.exist = true;					//Optional? DEFAULT: true
+	}
+
+	public Entity(char symbol, Point point, int precedence, int view, int fitness){
+		this("DEFAULT_NAME", symbol, point, true, precedence, view, fitness);
 	}
 
 	// public Entity(char symbol, int x, int y, int precedence, int view, int fitness){
@@ -29,12 +42,20 @@ public abstract class Entity{
 	// }
 
 	//Accessor
+	public String getName(){
+		return this.name;
+	}
+
 	public char getSymbol(){
 		return this.symbol;
 	}
 
 	public Point getPoint(){
 		return new Point(this.point);
+	}
+
+	public boolean getAnimate(){
+		return this.animate;
 	}
 
 	public int getPrecedence(){
@@ -86,7 +107,7 @@ public abstract class Entity{
 	// }
 
 	public String toString(){
-		return this.symbol + ": " + this.point + " Prec: " + this.precedence + " view: " + this.view + " fit: " + this.fitness + " exist: " + this.exist;
+		return this.name + ": " + this.symbol + ": " + this.point + " Animate: " + this.animate + " Prec: " + this.precedence + " view: " + this.view + " fit: " + this.fitness + " exist: " + this.exist;
 	}
 
 }
