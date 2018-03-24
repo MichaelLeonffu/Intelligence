@@ -16,6 +16,65 @@ public class Game{
 	private int width;
 	private int height;
 
+	private int cycle;
+	private int fitness;
+
+	private int maxCycle;
+
+	//Very simple for now
+	public void run(int time){
+		Snake snake = new Snake(new Point(1, 1));
+		Apple apple = new Apple(new Point(1, 1));
+		Game field = new Game(this.width, this.height);
+
+		field.addEntities(snake, apple);
+		snake.spawn(field.toEntitySpace());
+		apple.spawn(field.toEntitySpace());
+
+		long startTime = System.currentTimeMillis();  //startTime + 10000 > System.currentTimeMillis()
+
+		this.fitness = 0;
+		this.cycle = 0;
+		this.maxCycle = 0;
+		int tempCycle = 0;
+		int tempFit = 0;
+
+		while(field.gameRunning() && startTime + time > System.currentTimeMillis()){
+			tempFit = snake.getFitness();
+			// try{
+			// 	Thread.sleep(1);
+			// }catch(Exception e){
+			// 	System.out.println(e.getMessage());
+			// }
+			// System.out.println("cycle:" + this.cycle);
+			// System.out.println(field);
+			// System.out.println(snake);
+			//UPKEEP
+			field.upkeep();
+			//ACTION:
+			field.action();
+			this.cycle++;
+			if(tempFit < snake.getFitness()){	//If it incressed in fitness; it took x cycles
+				this.maxCycle = (this.cycle - tempCycle) > this.maxCycle? (this.cycle - tempCycle): this.maxCycle;
+				tempCycle = this.cycle;
+			}
+		}
+
+		this.fitness = snake.getFitness();
+	}
+
+	public int getCycle(){
+		return this.cycle;
+	}
+
+	public int getFitness(){
+		return this.fitness;
+	}
+
+	public int getMaxCycle(){
+		return this.maxCycle;
+	}
+
 	public Game(){
 		this(10, 10);
 	}
@@ -27,6 +86,8 @@ public class Game{
 		}
 		this.width = x;
 		this.height = y;
+		this.cycle = -1;
+		this.fitness = -1;
 		generateEmptyField(x,y);
 		generateWalls();
 	}
