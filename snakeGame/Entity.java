@@ -110,4 +110,16 @@ public abstract class Entity{
 		return this.name + ": " + this.symbol + ": " + this.point + " Animate: " + this.animate + " Prec: " + this.precedence + " view: " + this.view + " fit: " + this.fitness + " exist: " + this.exist;
 	}
 
+	public void print(){
+		System.out.printf("name: %10s symbol: %1s point: (%3d,%3d) animate: %5s precedence: %3d view: %3d fitness: %5d exist: %5s%n", this.name, this.symbol, this.point.getX(), this.point.getY(), this.animate, this.precedence, this.view, this.fitness, this.exist);
+	}
+
+	public void printHeader(){
+		System.out.printf("%-15s %-6s %-9s %-7s %-10s %-4s %-7s %-5s%n", "name", "symbol", "point", "animate", "precedence", "view", "fitness", "exist");
+	}
+
+	public void printBody(){
+		System.out.printf("%-15s %-6s (%3d,%3d) %-7s %10d %4d %7d %-5s%n", this.name, this.symbol, this.point.getX(), this.point.getY(), this.animate, this.precedence, this.view, this.fitness, this.exist);
+	}
+
 }
