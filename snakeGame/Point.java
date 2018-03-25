@@ -60,6 +60,14 @@ public class Point{
 	}
 
 	//Mutator
+	public boolean setPoint(Point point){
+		return this.setPoint(point.x, point.y);
+	}
+
+	public boolean setPoint(int x, int y){
+		return this.setX(x) && this.setY(y);
+	}
+
 	public boolean setX(int x){
 		if(this.x == x)			//If not changed then return false
 			return false;
