@@ -167,9 +167,7 @@ public class Snake extends Entity{
 		return true;
 	}
 
-}
-
-class Tail extends Entity{
+	class Tail extends Entity{
 	public final char SYMBOL_TAIL = 't';
 
 	public Tail(Point point){
@@ -198,4 +196,5 @@ class Tail extends Entity{
 		return true;
 	}
 
+}
 }
