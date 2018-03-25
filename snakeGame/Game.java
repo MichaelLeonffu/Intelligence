@@ -23,13 +23,15 @@ public class Game{
 
 	//Very simple for now
 	public void run(int time){
-		Snake snake = new Snake(new Point(1, 1));
-		Apple apple = new Apple(new Point(1, 1));
+		Snake snake = new Snake();
+		Apple apple = new Apple();
 		Game field = new Game(this.width, this.height);
 
-		field.addEntities(snake, apple);
-		snake.spawn(field.toEntitySpace());
-		apple.spawn(field.toEntitySpace());
+		// field.addEntities(snake, apple);
+		// //Spawn entityes in order from highest to lowest precendence
+		// snake.spawn(field);
+		// apple.spawn(field);
+		field.addEntitiesSpawn(snake, apple);
 
 		long startTime = System.currentTimeMillis();  //startTime + 10000 > System.currentTimeMillis()
 
@@ -41,22 +43,28 @@ public class Game{
 
 		while(field.gameRunning() && startTime + time > System.currentTimeMillis()){
 			tempFit = snake.getFitness();
-			// try{
-			// 	Thread.sleep(1);
-			// }catch(Exception e){
-			// 	System.out.println(e.getMessage());
-			// }
-			// System.out.println("cycle:" + this.cycle);
-			// System.out.println(field);
-			// System.out.println(snake);
 			//UPKEEP
-			field.upkeep();
+				field.upkeep();
+			//Display
+				System.out.println("cycle:" + this.cycle);
+				System.out.println(field);
+				//snake.print();
+				snake.printHeader();
+				snake.printBody();
+				apple.printBody();
+				for(Entity e: this.entities)
+					e.printBody();
 			//ACTION:
-			field.action();
+				field.action();
 			this.cycle++;
 			if(tempFit < snake.getFitness()){	//If it incressed in fitness; it took x cycles
 				this.maxCycle = (this.cycle - tempCycle) > this.maxCycle? (this.cycle - tempCycle): this.maxCycle;
 				tempCycle = this.cycle;
+			}
+			try{
+				Thread.sleep(field.gameRunning()? 50: 5000);
+			}catch(Exception e){
+				System.out.println(e.getMessage());
 			}
 		}
 
@@ -90,6 +98,7 @@ public class Game{
 		this.fitness = -1;
 		generateEmptyField(x,y);
 		generateWalls();
+		removeExtraEmpty();
 	}
 
 	// public Entity[] getField(){
@@ -111,6 +120,15 @@ public class Game{
 		return true;
 	}
 
+	public boolean addEntitiesSpawn(Entity...es){
+		for(Entity e: es){
+			//unsafe.
+			e.spawn(this);
+			this.entities.add(e);
+		}
+		return true;
+	}
+
 	private boolean generateEmptyField(int x, int y){
 		if(x < 1 || y < 1){
 			x = 1;
@@ -122,6 +140,22 @@ public class Game{
 			for(int j = 0; j < y; j++)
 				if(!addEntity(new Empty(new Point(i, j))))
 					return false;
+		return true;
+	}
+
+	private boolean removeExtraEmpty(){
+		//can be improved!!!!!!
+		ArrayList<Entity> toRemove = new ArrayList<Entity>();
+		for(int i = 0; i < this.entities.size(); i++)
+			if(this.entities.get(i) instanceof Empty)			//If it is a wall
+				for(Entity ec: this.entities)	//comapre to
+					if(!(ec instanceof Empty))	//and not compared to another empty
+						if(this.entities.get(i).getPoint().equals(ec.getPoint()))	//same location
+							if(!ec.getAnimate())		//if its not animate
+								toRemove.add(this.entities.get(i));
+								//entities.remove(i);	//might be bad logic.
+		for(Entity er: toRemove)
+			this.entities.remove(er);
 		return true;
 	}
 
@@ -141,14 +175,14 @@ public class Game{
 	}
 
 	public boolean upkeep(){
-		for(Entity e: this.entities)
-			e.upkeep(this);
 		//This is the main game method I suppose; adding apples + checking if stuff is still existing
 		for(Entity e: this.entities)		//To Change
 			for(Entity e1: this.entities)	//To Compare to
 				if(e.getPoint().equals(e1.getPoint()))	//If both are located at same spot
 					if(e.getPrecedence() < e1.getPrecedence())	//If the change one has less of a pressence
 						e.setExist(false);	//Then it'll not exist
+		for(Entity e: this.entities)
+			e.upkeep(this);
 		return true;
 	}
 

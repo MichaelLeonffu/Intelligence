@@ -10,8 +10,8 @@ import java.util.ArrayList;
 
 public class snakeGame{
 
-	public static final int WIDTH = 50;
-	public static final int HEIGHT = 50;
+	public static final int WIDTH = 7;
+	public static final int HEIGHT = 7;
 	public static final int TIME = 500;
 
 	public static double averageTrial(ArrayList<Double> trials){
@@ -27,11 +27,15 @@ public class snakeGame{
 
 		ArrayList<Double> trials = new ArrayList<Double>();
 
-		while(true){
+		int count = 0;
+
+		while(count < 10){
+
+			count++;
 			Game game = new Game(WIDTH, HEIGHT);
 
 			game.run(TIME);
-			//System.out.println("Cycle: " + game.getCycle() + " Fit: " + game.getFitness() + " Cycle/Fit: " + game.getCycle()/(game.getFitness() + 0.0));
+			// System.out.println("Cycle: " + game.getCycle() + " Fit: " + game.getFitness() + " Cycle/Fit: " + game.getCycle()/(game.getFitness() + 0.0));
 			if(trials.size() > 10){
 				trials.remove(0);
 			}
