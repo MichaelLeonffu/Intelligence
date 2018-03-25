@@ -19,6 +19,11 @@ public class Empty extends Entity{
 		return true;
 	}
 
+	public boolean relocate(Game game){
+		//Do nothing
+		return true;
+	}
+
 	public boolean upkeep(Game game){
 		//take no action
 		return true;

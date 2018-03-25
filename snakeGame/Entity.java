@@ -97,9 +97,10 @@ public abstract class Entity{
 	}
 
 	//Behavoirs
-	public abstract boolean spawn(Game field);	//Setting up game, more for relocating spawn positions via method.
-	public abstract boolean upkeep(Game field);	//Game phase to check current entity situation and update
-	public abstract boolean action(Game field);	//Game phase where each entity makes a move in the game space
+	public abstract boolean spawn(Game field);		//Alows entites to spawn other entities
+	public abstract boolean relocate(Game field); 	//For relocating positions via method; finding and moving to valid location
+	public abstract boolean upkeep(Game field);		//Game phase to check current entity situation and update
+	public abstract boolean action(Game field);		//Game phase where each entity makes a move in the game space
 
 	//Misc; not really applicable?
 	// public boolean equals(){
