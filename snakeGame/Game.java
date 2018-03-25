@@ -6,12 +6,15 @@
 *
 */
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 public class Game{
 	// public final char WALL = 'w';
 	// public final char APPLE = 'a';
 	public final char EMPTY = '□';
 	private ArrayList<Entity> entities = new ArrayList<Entity>();
+	private ArrayList<Entity> spawnQueue = new ArrayList<Entity>();
 
 	private int width;
 	private int height;
@@ -31,7 +34,7 @@ public class Game{
 		// //Spawn entityes in order from highest to lowest precendence
 		// snake.spawn(field);
 		// apple.spawn(field);
-		field.addEntitiesSpawn(snake, apple);
+		field.addEntitiesRelocate(snake, apple);
 
 		long startTime = System.currentTimeMillis();  //startTime + 10000 > System.currentTimeMillis()
 
@@ -46,14 +49,14 @@ public class Game{
 			//UPKEEP
 				field.upkeep();
 			//Display
+				System.out.println("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n");
 				System.out.println("cycle:" + this.cycle);
 				System.out.println(field);
 				//snake.print();
 				snake.printHeader();
-				snake.printBody();
-				apple.printBody();
-				for(Entity e: this.entities)
-					e.printBody();
+				for(Entity e: field.getEntities())
+					if(e.getAnimate())	//If it moves then put it on the log
+						e.printBody();
 			//ACTION:
 				field.action();
 			this.cycle++;
@@ -114,16 +117,21 @@ public class Game{
 		return true;
 	}
 
+	public boolean addSpawnQueue(Entity e){
+		this.spawnQueue.add(e);
+		return true;
+	}
+
 	public boolean addEntities(Entity...es){
 		for(Entity e: es)
 			entities.add(e);
 		return true;
 	}
 
-	public boolean addEntitiesSpawn(Entity...es){
+	public boolean addEntitiesRelocate(Entity...es){
 		for(Entity e: es){
 			//unsafe.
-			e.spawn(this);
+			e.relocate(this);
 			this.entities.add(e);
 		}
 		return true;
@@ -175,14 +183,23 @@ public class Game{
 	}
 
 	public boolean upkeep(){
-		//This is the main game method I suppose; adding apples + checking if stuff is still existing
-		for(Entity e: this.entities)		//To Change
-			for(Entity e1: this.entities)	//To Compare to
-				if(e.getPoint().equals(e1.getPoint()))	//If both are located at same spot
-					if(e.getPrecedence() < e1.getPrecedence())	//If the change one has less of a pressence
-						e.setExist(false);	//Then it'll not exist
+		// //This is the main game method I suppose; adding apples + checking if stuff is still existing
+		// for(Entity e: this.entities)		//To Change
+		// 	for(Entity e1: this.entities)	//To Compare to
+		// 		if(e.getPoint().equals(e1.getPoint()))	//If both are located at same spot
+		// 			if(e.getPrecedence() < e1.getPrecedence())	//If the change one has less of a pressence
+		// 				e.setExist(false);	//Then it'll not exist
+		//Sort by precedence so that higher goes first.
+		Collections.sort(this.entities, new SortByPrecedence());
+		Collections.reverse(this.entities);
+		this.spawnQueue.clear();
 		for(Entity e: this.entities)
 			e.upkeep(this);
+		//Sort by precedence so that higher goes first.
+		Collections.sort(this.spawnQueue, new SortByPrecedence());
+		Collections.reverse(this.spawnQueue);
+		for(Entity e: this.spawnQueue)
+			e.spawn(this);
 		return true;
 	}
 
@@ -198,6 +215,13 @@ public class Game{
 		for(int i = 0; i < this.entities.size(); i++){
 			this.entities.get(i).action(this);
 		}
+		//THIS IS KINDA UPKEEP Y; but like arguably this needs to happen before the other upkeeps
+		//This is the main game method I suppose; adding apples + checking if stuff is still existing
+		for(Entity e: this.entities)		//To Change
+			for(Entity e1: this.entities)	//To Compare to
+				if(e.getPoint().equals(e1.getPoint()))	//If both are located at same spot
+					if(e.getPrecedence() < e1.getPrecedence())	//If the change one has less of a pressence
+						e.setExist(false);	//Then it'll not exist
 		return true;
 	}
 
@@ -245,5 +269,12 @@ public class Game{
 			finalStr += "\n";
 		}
 		return finalStr;
+	}
+
+	public class SortByPrecedence implements Comparator<Entity>{
+		//to sort by precedence ACCENDING
+		public int compare(Entity a, Entity b){
+			return a.getPrecedence() - b.getPrecedence();
+		}
 	}
 }
