@@ -5,6 +5,8 @@
 *	Snake game! 
 *
 */
+// package intelligence.snakeGame;
+
 import java.util.Random;
 import java.util.ArrayList;
 import java.util.Collections;

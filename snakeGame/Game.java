@@ -5,6 +5,8 @@
 *	This is the board.
 *
 */
+// package intelligence.snakeGame;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;

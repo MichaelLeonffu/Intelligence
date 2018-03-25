@@ -5,6 +5,7 @@
 *	Snake game! 
 *
 */
+// package intelligence.snakeGame;
 
 public class Point{
 	private int x;

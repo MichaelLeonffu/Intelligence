@@ -5,6 +5,7 @@
 *	Snake game! 
 *
 */
+// package intelligence.snakeGame;
 
 import java.util.ArrayList;
 

@@ -6,6 +6,7 @@
 *	Empty does nothing! It's an entity, doesn't move.
 *
 */
+// package intelligence.snakeGame;
 
 public class Empty extends Entity{
 	public final char SYMBOL_EMPTY = '□';

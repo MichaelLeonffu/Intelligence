@@ -6,6 +6,7 @@
 *	Entity interacts with other entities in the game space.
 *
 */
+// package intelligence.snakeGame;
 
 public abstract class Entity{
 	//Identification

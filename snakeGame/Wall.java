@@ -6,6 +6,7 @@
 *	Wall does nothing! It's an entity, doesn't move.
 *
 */
+// package intelligence.snakeGame;
 
 public class Wall extends Entity{
 	public final char SYMBOL_WALL = '■';
