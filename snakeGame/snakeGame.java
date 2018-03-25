@@ -10,9 +10,9 @@ import java.util.ArrayList;
 
 public class snakeGame{
 
-	public static final int WIDTH = 7;
-	public static final int HEIGHT = 7;
-	public static final int TIME = 500;
+	public static final int WIDTH = 8;
+	public static final int HEIGHT = 8;
+	public static final int TIME = 100000;
 
 	public static double averageTrial(ArrayList<Double> trials){
 		if(trials.size() == 0)
@@ -34,6 +34,19 @@ public class snakeGame{
 			count++;
 			Game game = new Game(WIDTH, HEIGHT);
 
+			if(true){
+				System.out.println("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n");
+				System.out.println(intro());
+				System.out.println("\n\n\n\n\n");
+				try{
+					Thread.sleep(1000);
+				}catch(Exception e){
+
+				}
+			}
+
+
+
 			game.run(TIME);
 			// System.out.println("Cycle: " + game.getCycle() + " Fit: " + game.getFitness() + " Cycle/Fit: " + game.getCycle()/(game.getFitness() + 0.0));
 			if(trials.size() > 10){
@@ -44,7 +57,7 @@ public class snakeGame{
 				trials.add(game.getCycle()/(game.getFitness() + 0.0));
 			}
 
-			System.out.printf("Time: %5dms Width: %2d Height: %2d Cycle: %7d Max Cycle: %3d Fit: %7d Cycle/Fit: %2.2f Average: %2.2f%n", TIME, WIDTH, HEIGHT,  game.getCycle(), game.getMaxCycle(), game.getFitness(), game.getCycle()/(game.getFitness() + 0.0), averageTrial(trials));
+			// System.out.printf("Time: %5dms Width: %2d Height: %2d Cycle: %7d Max Cycle: %3d Fit: %4d Cycle/Fit: %4.2f Average: %4.2f%n", TIME, WIDTH, HEIGHT,  game.getCycle(), game.getMaxCycle(), game.getFitness(), game.getCycle()/(game.getFitness() + 0.0), averageTrial(trials));
 		}
 
 		// // Entities entities = new Entities();
@@ -117,11 +130,11 @@ public class snakeGame{
 	}
 
 	public static String intro(){
-		return 	"+--------------------------+\n" +
-				"|     Snake Game v0.1      |\n" +
-				"|                          |\n" +
-				"|       Width:  5          |\n" +
-				"|       Height: 5          |\n" +
-				"+--------------------------+";
+		return 	"┏━━━━━━━━━━━━━━━━━━━━━━━━━━┓\n" +
+				"┃     Snake Game v0.2.0    ┃\n" +
+				"┃                          ┃\n" +
+				"┃       Width:  8          ┃\n" +
+				"┃       Height: 8          ┃\n" +
+				"┗━━━━━━━━━━━━━━━━━━━━━━━━━━┛";
 	}
 }
