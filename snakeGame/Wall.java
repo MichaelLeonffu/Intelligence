@@ -3,6 +3,7 @@
 *	@version 03-22-2018
 *
 *	Snake game! Wall!
+*	Wall does nothing! It's an entity, doesn't move.
 *
 */
 
@@ -10,15 +11,20 @@ public class Wall extends Entity{
 	public final char SYMBOL_WALL = '■';
 
 	public Wall(Point point){
-		super('■', new Point(point), 1, -1, -1);
+		super("Wall", '■', new Point(point), false, 1, -1, -1);
 	}
 
-	public boolean upkeep(Game field){
+	public boolean spawn(Game game){
+		//Do nothing
+		return true;
+	}
+
+	public boolean upkeep(Game game){
 		//take no action
 		return true;
 	}
 
-	public boolean action(Game field){
+	public boolean action(Game game){
 		//take no action
 		return true;
 	}
