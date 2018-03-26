@@ -1,9 +1,10 @@
-/*
-*	@author Michael Leonffu
-*	@version 03-22-2018
-*
-*	Snake Game!
+/**
+*	
 *	Entity interacts with other entities in the game space.
+*	
+*	@author Michael Leonffu
+*	@version v0.2.0-alpha
+*	@since v0.1.0-alpha
 *
 */
 // package intelligence.snakeGame;
@@ -14,19 +15,21 @@ public abstract class Entity{
 	private char symbol;		//Each entity has a symbol
 	private Point point;		//Each entity has a position
 	//Behavoirs/propertys
-	private boolean animate;	//Does this entity every move? (Does not change.)
+	private boolean animate;	//Does this entity every move? (Should not change.)
+	private boolean mortal;		//Does this entity ever not-exist? (Should not change.); use immune if can change.
 	private int precedence;		//Higher precedence means that it'll "destory" low precedence
 	private int view;			//Higher views will be shown over low views on the poistion 
 	//Situations
 	private int fitness;		//Each entity has a fitness; -1 for N/A
 	private boolean exist;		//If the entiity is existing;
 
-	public Entity(String name, char symbol, Point point, boolean animate, int precedence, int view, int fitness){
+	public Entity(String name, char symbol, Point point, boolean animate, boolean mortal, int precedence, int view, int fitness){
 		this.name = name;					//Optional DEFAULT: "DEFAULT_NAME"
 		this.symbol = symbol;				//Required
 		this.point = new Point(point);		//Required (even if abritrary)
 		
 		this.animate = animate;				//Optional DEFAULT: true
+		this.mortal = mortal;				//Required DEFAULT: true
 		this.precedence = precedence;		//Required
 		this.view = view;					//Required
 		
@@ -35,12 +38,8 @@ public abstract class Entity{
 	}
 
 	public Entity(char symbol, Point point, int precedence, int view, int fitness){
-		this("DEFAULT_NAME", symbol, point, true, precedence, view, fitness);
+		this("DEFAULT_NAME", symbol, point, true, true, precedence, view, fitness);
 	}
-
-	// public Entity(char symbol, int x, int y, int precedence, int view, int fitness){
-	// 	this(symbol, new Point(x, y), precedence, view, fitness);
-	// }
 
 	//Accessor
 	public String getName(){
@@ -57,6 +56,10 @@ public abstract class Entity{
 
 	public boolean getAnimate(){
 		return this.animate;
+	}
+
+	public boolean getMortal(){
+		return this.mortal;
 	}
 
 	public int getPrecedence(){
@@ -102,11 +105,6 @@ public abstract class Entity{
 	public abstract boolean relocate(Game field); 	//For relocating positions via method; finding and moving to valid location
 	public abstract boolean upkeep(Game field);		//Game phase to check current entity situation and update
 	public abstract boolean action(Game field);		//Game phase where each entity makes a move in the game space
-
-	//Misc; not really applicable?
-	// public boolean equals(){
-	// 	return false;
-	// }
 
 	public String toString(){
 		return this.name + ": " + this.symbol + ": " + this.point + " Animate: " + this.animate + " Prec: " + this.precedence + " view: " + this.view + " fit: " + this.fitness + " exist: " + this.exist;

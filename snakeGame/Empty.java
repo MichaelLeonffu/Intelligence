@@ -12,7 +12,7 @@ public class Empty extends Entity{
 	public final char SYMBOL_EMPTY = '□';
 
 	public Empty(Point point){
-		super("Empty", ' ', new Point(point), false, -2, -2, -1);
+		super("Empty", ' ', new Point(point), false, false, -2, -2, -1);
 	}
 
 	public boolean spawn(Game game){
@@ -34,5 +34,4 @@ public class Empty extends Entity{
 		//take no action
 		return true;
 	}
-
 }

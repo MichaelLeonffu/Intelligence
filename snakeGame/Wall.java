@@ -12,7 +12,7 @@ public class Wall extends Entity{
 	public final char SYMBOL_WALL = '■';
 
 	public Wall(Point point){
-		super("Wall", '■', new Point(point), false, 2, -1, -1);
+		super("Wall", '■', new Point(point), false, false, 2, -1, -1);
 	}
 
 	public boolean spawn(Game game){

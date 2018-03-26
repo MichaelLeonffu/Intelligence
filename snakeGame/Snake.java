@@ -25,7 +25,7 @@ public class Snake extends Entity{
 	}
 
 	public Snake(Point point){
-		super("Snake_Head", 's', new Point(point), true, 0, 1, 0);
+		super("Snake_Head", 's', new Point(point), true, true, 0, 1, 0);
 		super.setExist(false);
 		//this.position = new Point(point);
 	}
@@ -104,32 +104,35 @@ public class Snake extends Entity{
 	}
 
 	//This is where the algorithms go; for now it'll be a random stay alive.
-	private int snakeBrain(Game field){
+	private int snakeBrain(Game game){
+		Entity[][] entitySpace = game.toEntitySpace();
 		Integer[] choices = choices();
 		for(int i = 0; i < choices.length; i++){
 			//Should check if things are in bounds!
 			switch(choices[i].intValue()){
 				case 0:
-					if(field.toEntitySpace()[super.getPoint().getY() + 1][super.getPoint().getX()].getPrecedence() <= super.getPrecedence()){
-						return 0;
-					}
+					if(entitySpace.length > super.getPoint().y + 1 && super.getPoint().y >= 0)
+						if(entitySpace[super.getPoint().y + 1].length > super.getPoint().x + 0 && super.getPoint().x >= 0)
+							if(entitySpace[super.getPoint().y + 1][super.getPoint().x + 0].getPrecedence() <= super.getPrecedence())
+								return 0;
 				case 1:
-					if(field.toEntitySpace()[super.getPoint().getY()][super.getPoint().getX() + 1].getPrecedence() <= super.getPrecedence()){
-						return 1;
-					}
+					if(entitySpace.length > super.getPoint().y + 0 && super.getPoint().y >= 0)
+						if(entitySpace[super.getPoint().y + 0].length > super.getPoint().x + 1 && super.getPoint().x >= 0)
+							if(entitySpace[super.getPoint().y + 0][super.getPoint().x + 1].getPrecedence() <= super.getPrecedence())
+								return 1;
 				case 2:
-					if(field.toEntitySpace()[super.getPoint().getY() - 1][super.getPoint().getX()].getPrecedence() <= super.getPrecedence()){
-						return 2;
-					}
+					if(entitySpace.length > super.getPoint().y - 1 && super.getPoint().y >= 0)
+						if(entitySpace[super.getPoint().y - 1].length > super.getPoint().x + 0 && super.getPoint().x >= 0)
+							if(entitySpace[super.getPoint().y - 1][super.getPoint().x + 0].getPrecedence() <= super.getPrecedence())
+								return 2;
 				case 3:
-					if(field.toEntitySpace()[super.getPoint().getY()][super.getPoint().getX() - 1].getPrecedence() <= super.getPrecedence()){
-						return 3;
-					}
+					if(entitySpace.length > super.getPoint().y + 0 && super.getPoint().y >= 0)
+						if(entitySpace[super.getPoint().y + 0].length > super.getPoint().x - 1 && super.getPoint().x >= 0)
+							if(entitySpace[super.getPoint().y + 0][super.getPoint().x - 1].getPrecedence() <= super.getPrecedence())
+								return 3;
 			}
 		}
 		return 0;
-		// Random random = new Random();
-		// return random.nextInt(4);
 	}
 
 	//THIS IS TEMP METHOD
@@ -170,33 +173,33 @@ public class Snake extends Entity{
 	}
 
 	class Tail extends Entity{
-	public final char SYMBOL_TAIL = 't';
+		public final char SYMBOL_TAIL = 't';
 
-	public Tail(Point point){
-		super("Snake_Tail", 't', new Point(point), true, 1, 1, 0);
-		super.setExist(true);	//Spawns
+		public Tail(Point point){
+			super("Snake_Tail", 't', new Point(point), true, true, 1, 1, 0);
+			super.setExist(true);	//Spawns
+		}
+
+		public boolean spawn(Game game){
+			//Snake spawns in when created.
+			game.addEntity(this);	//Add this tail to the game
+			return true;
+		}
+
+		public boolean relocate(Game game){
+			//Do nothing
+			return true;
+		}
+
+		public boolean action(Game field){
+			//I think its best if we dont use the game field.
+			return true;
+		}
+
+		public boolean upkeep(Game field){
+			//Doesn't really upkeep, its more of a child entity.
+			return true;
+		}
+
 	}
-
-	public boolean spawn(Game game){
-		//Snake spawns in when created.
-		game.addEntity(this);	//Add this tail to the game
-		return true;
-	}
-
-	public boolean relocate(Game game){
-		//Do nothing
-		return true;
-	}
-
-	public boolean action(Game field){
-		//I think its best if we dont use the game field.
-		return true;
-	}
-
-	public boolean upkeep(Game field){
-		//Doesn't really upkeep, its more of a child entity.
-		return true;
-	}
-
-}
 }

@@ -19,7 +19,7 @@ public class Apple extends Entity{
 	}
 
 	public Apple(Point point){
-		super("Apple", '', new Point(point), true, -1, 0, -1);
+		super("Apple", '', new Point(point), true, true, -1, 0, -1);
 		super.setExist(true);
 	}
 
@@ -30,7 +30,7 @@ public class Apple extends Entity{
 			// 	System.out.println("FAILEd");
 			// 	System.exit(0);
 			// }
-			relocate(game);	//This apple was recently spawned so relocate it.
+			relocate(game);
 			super.setExist(true);
 		}else{
 			System.out.println("FAILEd3");
@@ -57,16 +57,13 @@ public class Apple extends Entity{
 	}
 
 	public boolean upkeep(Game game){
-		//Its action is to move to correct location if it does not exist
 		if(!super.getExist())	//if the apple is not-existing
 			game.addSpawnQueue(this);	//queue this apple for spawn checking
-			//if(!relocate(game))	//Something is awrong with spawning
-				//return false;
 		return true;
 	}
 
 	public boolean action(Game game){
-		//Does nothing;
+		//Do nothing
 		return true;
 	}
 
