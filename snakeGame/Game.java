@@ -12,11 +12,13 @@ import java.util.Collections;
 import java.util.Comparator;
 
 public class Game{
-	// public final char WALL = 'w';
-	// public final char APPLE = 'a';
-	public final char EMPTY = '□';
 	private ArrayList<Entity> entities = new ArrayList<Entity>();
 	private ArrayList<Entity> spawnQueue = new ArrayList<Entity>();
+
+	public static final int MIN_HEIGHT = 3;
+	public static final int MIN_WIDTH = 3;
+	public static final int DEFAULT_HEIGHT = 10;
+	public static final int DEFAULT_WIDTH = 10;
 
 	private int width;
 	private int height;
@@ -26,16 +28,22 @@ public class Game{
 
 	private int maxCycle;
 
+	//Game loop:
+		//While snake is alive;
+			//Each entitiy then checks if it is alive		UPKEEP
+				//Checks if snake is still alive etc			-Entity.upkeep()
+				//Also allows entities to spawn via entity
+			//Print the field 								PRINT
+			//Each enitity takes an action					ACTION
+
+
 	//Very simple for now
 	public void run(int time){
 		Snake snake = new Snake();
 		Apple apple = new Apple();
 		Game field = new Game(this.width, this.height);
 
-		// field.addEntities(snake, apple);
-		// //Spawn entityes in order from highest to lowest precendence
-		// snake.spawn(field);
-		// apple.spawn(field);
+		//Spawn and relocate entityes in order from highest to lowest precendence
 		field.addEntitiesRelocate(snake, apple);
 
 		long startTime = System.currentTimeMillis();  //startTime + 10000 > System.currentTimeMillis()
@@ -57,7 +65,7 @@ public class Game{
 				//snake.print();
 				snake.printHeader();
 				for(Entity e: field.getEntities())
-					if(e.getAnimate())	//If it moves then put it on the log
+					//if(e.getAnimate())	//If it moves then put it on the log
 						e.printBody();
 			//ACTION:
 				field.action();
@@ -76,44 +84,39 @@ public class Game{
 		this.fitness = snake.getFitness();
 	}
 
-	public int getCycle(){
-		return this.cycle;
-	}
-
-	public int getFitness(){
-		return this.fitness;
-	}
-
-	public int getMaxCycle(){
-		return this.maxCycle;
-	}
-
-	public Game(){
-		this(10, 10);
-	}
-
-	public Game(int x, int y){
-		if(x < 1 || y < 1){
-			x = 10;
-			y = 10;
+	//Mutator
+		public int getCycle(){
+			return this.cycle;
 		}
-		this.width = x;
-		this.height = y;
-		this.cycle = -1;
-		this.fitness = -1;
-		generateEmptyField(x,y);
-		generateWalls();
-		removeExtraEmpty();
-	}
 
-	// public Entity[] getField(){
-	// 	Entity[] tempField = new Entity[this.entities.length];
-	// 	for(int x = 0; x < field.length; x++){
-	// 		tempField[x] = field[x];
-	// 	}
-	// 	return tempField;
-	// }
+		public int getFitness(){
+			return this.fitness;
+		}
 
+		public int getMaxCycle(){
+			return this.maxCycle;
+		}
+
+	//Constructor
+		public Game(){
+			this(10, 10);
+		}
+
+		public Game(int x, int y){	//Should throw execption if field too small!!!!
+			if(x < this.MIN_WIDTH || y < this.MIN_HEIGHT){
+				x = this.DEFAULT_WIDTH;
+				y = this.DEFAULT_HEIGHT;
+			}
+			this.width = x;
+			this.height = y;
+			this.cycle = -1;
+			this.fitness = -1;
+			generateEmptyField(x,y);
+			generateWalls();
+			removeExtraEmpty();
+		}
+
+	//Methods
 	public boolean addEntity(Entity e){
 		entities.add(e);
 		return true;
@@ -139,12 +142,10 @@ public class Game{
 		return true;
 	}
 
-	private boolean generateEmptyField(int x, int y){
+	private boolean generateEmptyField(int x, int y){ //This should be an exception! if too small; SHOULD remove this method; intergrate to its caller.
 		if(x < 1 || y < 1){
 			x = 1;
 			y = 1;
-			//This should be an exception!
-			System.out.println("ERROR BAD SIZE generateEmptyField");
 		}
 		for(int i = 0; i < x; i++)
 			for(int j = 0; j < y; j++)
@@ -185,21 +186,23 @@ public class Game{
 	}
 
 	public boolean upkeep(){
-		// //This is the main game method I suppose; adding apples + checking if stuff is still existing
-		// for(Entity e: this.entities)		//To Change
-		// 	for(Entity e1: this.entities)	//To Compare to
-		// 		if(e.getPoint().equals(e1.getPoint()))	//If both are located at same spot
-		// 			if(e.getPrecedence() < e1.getPrecedence())	//If the change one has less of a pressence
-		// 				e.setExist(false);	//Then it'll not exist
+		//THIS IS KINDA UPKEEP Y; but like arguably this needs to happen before the other upkeeps
+		//This is the main game method I suppose; adding apples + checking if stuff is still existing
+		for(Entity e: this.entities)		//To Change
+			if(e.getMortal())				//Can its exist change?
+				for(Entity e1: this.entities)	//To Compare to
+					if(e.getPoint().equals(e1.getPoint()))	//If both are located at same spot
+						if(e.getPrecedence() < e1.getPrecedence())	//If the change one has less of a pressence
+							e.setExist(false);	//Then it'll not exist
 		//Sort by precedence so that higher goes first.
-		Collections.sort(this.entities, new SortByPrecedence());
-		Collections.reverse(this.entities);
+		Collections.sort(this.entities, new SortByPrecedenceDec()); //can be more effiencent and test for any changes in list before sorting.
+		// Collections.reverse(this.entities);
 		this.spawnQueue.clear();
 		for(Entity e: this.entities)
 			e.upkeep(this);
 		//Sort by precedence so that higher goes first.
-		Collections.sort(this.spawnQueue, new SortByPrecedence());
-		Collections.reverse(this.spawnQueue);
+		Collections.sort(this.spawnQueue, new SortByPrecedenceDec());
+		// Collections.reverse(this.spawnQueue);
 		for(Entity e: this.spawnQueue)
 			e.spawn(this);
 		return true;
@@ -217,13 +220,6 @@ public class Game{
 		for(int i = 0; i < this.entities.size(); i++){
 			this.entities.get(i).action(this);
 		}
-		//THIS IS KINDA UPKEEP Y; but like arguably this needs to happen before the other upkeeps
-		//This is the main game method I suppose; adding apples + checking if stuff is still existing
-		for(Entity e: this.entities)		//To Change
-			for(Entity e1: this.entities)	//To Compare to
-				if(e.getPoint().equals(e1.getPoint()))	//If both are located at same spot
-					if(e.getPrecedence() < e1.getPrecedence())	//If the change one has less of a pressence
-						e.setExist(false);	//Then it'll not exist
 		return true;
 	}
 
@@ -255,15 +251,8 @@ public class Game{
 	}
 
 	public String toString(){
-		//char[][] space = toCharSpace();
 		Entity[][] space = toEntitySpace();
 		String finalStr = "";
-		// for(int column = 0; column < space.length; column++){
-		// 	for(int row = 0; row < space[column].length; row++){
-		// 		finalStr += space[column][row] + " ";
-		// 	}
-		// 	finalStr += "\n";
-		// }
 		for(int column = 0; column < space.length; column++){
 			for(int row = 0; row < space[column].length; row++){
 				finalStr += space[column][row].getSymbol() + " ";
@@ -277,6 +266,13 @@ public class Game{
 		//to sort by precedence ACCENDING
 		public int compare(Entity a, Entity b){
 			return a.getPrecedence() - b.getPrecedence();
+		}
+	}
+
+	public class SortByPrecedenceDec implements Comparator<Entity>{
+		//to sort by precedence DECENDING
+		public int compare(Entity a, Entity b){
+			return b.getPrecedence() - a.getPrecedence();
 		}
 	}
 }
