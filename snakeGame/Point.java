@@ -7,7 +7,7 @@
 *	@since v0.1.0-alpha
 *
 */
-// package intelligence.snakeGame;
+package intelligence.snakeGame;
 
 public class Point{
 	/** Codinate X location. */

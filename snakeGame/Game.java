@@ -7,7 +7,7 @@
 *	@since v0.1.0-alpha
 *
 */
-// package intelligence.snakeGame;
+package intelligence.snakeGame;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -88,7 +88,7 @@ public class Game{
 		this.fitness = snake.getFitness();
 	}
 
-	//Mutator
+	//Accessor
 		public int getCycle(){
 			return this.cycle;
 		}
