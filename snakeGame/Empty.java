@@ -16,7 +16,7 @@ public class Empty extends Entity{
 	}
 
 	public boolean spawn(Game game){
-		//do nothing
+		//Do nothing
 		return true;
 	}
 
@@ -26,12 +26,12 @@ public class Empty extends Entity{
 	}
 
 	public boolean upkeep(Game game){
-		//take no action
+		//Do nothing
 		return true;
 	}
 
 	public boolean action(Game game){
-		//take no action
+		//Do nothing
 		return true;
 	}
 }

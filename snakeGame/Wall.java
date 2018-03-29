@@ -26,12 +26,12 @@ public class Wall extends Entity{
 	}
 
 	public boolean upkeep(Game game){
-		//take no action
+		//Do nothing
 		return true;
 	}
 
 	public boolean action(Game game){
-		//take no action
+		//Do nothing
 		return true;
 	}
 }
