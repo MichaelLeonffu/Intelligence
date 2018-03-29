@@ -1,8 +1,10 @@
-/*
+/**
+*	
+*	SnakeGame!!!!! Eats apples and spawns tails which follows the snake!
+*	
 *	@author Michael Leonffu
-*	@version 03-22-2018
-*
-*	Snake game! 
+*	@version v0.2.1-alpha
+*	@since v0.1.0-alpha
 *
 */
 // package intelligence.snakeGame;

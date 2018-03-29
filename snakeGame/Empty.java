@@ -1,9 +1,10 @@
-/*
+/**
+*	
+*	Empty game! Wall! Empty does nothing! It's an entity, doesn't move.
+*	
 *	@author Michael Leonffu
-*	@version 03-22-2018
-*
-*	Empty game!
-*	Empty does nothing! It's an entity, doesn't move.
+*	@version v0.2.0-alpha
+*	@since v0.1.0-alpha
 *
 */
 // package intelligence.snakeGame;

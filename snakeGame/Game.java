@@ -1,8 +1,10 @@
-/*
+/**
+*	
+*	This is the game
+*	
 *	@author Michael Leonffu
-*	@version 03-22-2018
-*
-*	This is the board.
+*	@version v0.2.1-alpha
+*	@since v0.1.0-alpha
 *
 */
 // package intelligence.snakeGame;
