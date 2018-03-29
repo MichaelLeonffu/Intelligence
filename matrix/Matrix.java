@@ -121,14 +121,8 @@ public class Matrix{
 	}
 
 	public void addToThis(Matrix matrix) throws Exception{
-		// String[] addSign = {" + "};
-		// this.opHistory.add(addSign);
-		// this.opHistory.add(matrix.toStringLine());
 		this.data = this.add(matrix);
 		this.addOp("+", matrix.toStringLine(), this.toStringLine());
-		// String[] eqSign = {" = "};
-		// this.opHistory.add(eqSign);
-		// this.opHistory.add(this.toStringLine());
 	}
 
 	/** I may want to remove thses extra methods because APi can be called to get the values afterwards anyways */
@@ -138,15 +132,9 @@ public class Matrix{
 	}
 
 	public void scalarMultiplicationThis(int num){
-		// String[] multiplySign = {" x "};
-		// this.opHistory.add(multiplySign);
 		String[] value = {String.valueOf(num)};
-		// this.opHistory.add(value);
 		this.data = this.scalarMultiplication(num);
 		this.addOp("x", value, this.toStringLine());
-		// String[] eqSign = {" = "};
-		// this.opHistory.add(eqSign);
-		// this.opHistory.add(this.toStringLine());
 	}
 
 	/** I may want to remove thses extra methods because APi can be called to get the values afterwards anyways */
@@ -156,14 +144,30 @@ public class Matrix{
 	}
 
 	public void transposeThis(){
-		// String[] transposeSign = {" T "};
-		// this.opHistory.add(transposeSign);
-		// this.opHistory.add(this.toStringLine());
 		this.data = this.transpose();
 		this.addOp("T", this.toStringLine());
-		// String[] eqSign = {" = "};
-		// this.opHistory.add(eqSign);
-		// this.opHistory.add(this.toStringLine());
+	}
+
+	/** I may want to remove thses extra methods because APi can be called to get the values afterwards anyways */
+	@Deprecated
+	public double[][] multiply(Matrix matrix) throws Exception{
+		return this.multiply(this, matrix);
+	}
+
+	public void multiplyThis(Matrix matrix) throws Exception{
+		this.data = this.multiply(matrix);
+		this.addOp("x", matrix.toStringLine(), this.toStringLine());
+	}
+
+	/** I may want to remove thses extra methods because APi can be called to get the values afterwards anyways */
+	@Deprecated
+	public double[][] transform(Transform transformMethod){
+		return this.transform(this, transformMethod);
+	}
+
+	public void transformThis(Transform transformMethod){
+		this.data = this.transform(transformMethod);
+		this.addOp(transformMethod.getName(), this.toStringLine());
 	}
 
 	//Static methods
@@ -179,6 +183,7 @@ public class Matrix{
 		return temp;
 	}
 
+	/** Multiplies every element by the num value; can be replaced with transform */
 	public static double[][] scalarMultiplication(int num, Matrix matrix){
 		double[][] temp = new double[matrix.getRows()][matrix.getColumns()];
 		double[][] matrixData = matrix.getData();
@@ -194,6 +199,50 @@ public class Matrix{
 		for(int i = 0; i < matrixData.length; i++)
 			for(int j = 0; j < matrixData[i].length; j++)
 				temp[j][i] = matrixData[i][j];
+		return temp;
+	}
+
+	/** As matrix1xmatrix2; where matrix1 columns = matrix2 rows */
+	public static double[][] multiply(Matrix matrix1, Matrix matrix2) throws Exception{
+		if(matrix1.getColumns() != matrix2.getRows())
+			throw new Exception("cannot be multipled, m1 columns != m2 rows");
+		//Resulting will be a matrix of m1 rows x m2 columns
+		// [][]            [][][]
+		// [][]   [][][]   [][][]
+		// [][] x [][][] = [][][]
+		// [][]            [][][]
+		// 4x2     2x3      4x3  
+
+
+		//			[0][ 1][ 0]
+		//			[1][ 2][ 3]
+
+		// [1][2] 	[2][ 5][ 6]
+		// [3][4] 	[4][11][12]
+		// [5][6] 	[6][17][18]
+		// [7][8] 	[7][25][21]
+
+		double[][] temp = new double[matrix1.getRows()][matrix2.getColumns()];
+		//It may be easyer if transposed.......
+		double[][] matrix1Data = matrix1.getData();
+		double[][] matrix2DataT = matrix2.transpose();
+		for(int i = 0; i < temp.length; i++){
+			for(int j = 0; j < temp[i].length; j++){
+				double sum = 0;
+				for(int k = 0; k < matrix1.getColumns(); k++)
+					sum += matrix1Data[i][k] * matrix2DataT[j][k];
+				temp[i][j] = sum;
+			}
+		}
+		return temp;
+	}
+
+	public static double[][] transform(Matrix matrix, Transform transformMethod){
+		double[][] temp = new double[matrix.getRows()][matrix.getColumns()];
+		double[][] matrixData = matrix.getData();
+		for(int i = 0; i < matrix.getRows(); i++)
+			for(int j = 0; j < matrix.getColumns(); j++)
+				temp[i][j] = transformMethod.transform(matrixData[i][j]);
 		return temp;
 	}
 
@@ -229,7 +278,6 @@ public class Matrix{
 			finalString[i+1] = "[";
 			for(double value: data[i]){
 				finalString[i+1] += String.format("%8.2f,", value);
-				//finalString += value + ",";	//requires formatting...
 			}
 			finalString[i+1] = finalString[i+1].substring(0, finalString[i+1].length()-1) + "]";
 		}
@@ -311,11 +359,6 @@ public class Matrix{
 	// }
 
 	public static void main(String[] args) throws Exception{
-		// Matrix myMatrix = new Matrix(2, 2);
-		// System.out.print(myMatrix);
-
-		// myMatrix.setName("Anna Li");
-		// System.out.print(myMatrix);
 
 		double[][] sampleData = {{1.0,0.0},{9.0,8.0},{0.0, 9.1}};
 		Matrix sampleMatrix = new Matrix(sampleData);
@@ -338,6 +381,20 @@ public class Matrix{
 		sampleMatrix3.transposeThis();
 		sampleMatrix3.transposeThis();
 
+		Matrix sampleMatrix3T = new Matrix(sampleMatrix3.transpose());
+		sampleMatrix3T.setName("Sample Matrix3T");
+		System.out.print(sampleMatrix3T);
+
+		sampleMatrix3.multiplyThis(sampleMatrix3T);
+
+		Transform transformToZero = new Transform("To Zero"){
+			public double transform(double value){
+				return value * 0;
+			}
+		};
+
+		sampleMatrix3.transformThis(transformToZero);
+
 		System.out.println(sampleMatrix3.opHistoryToString());
 
 		// double[][] sampleData = {{1.0,0.0},{9.0,8.0}};
@@ -349,7 +406,19 @@ public class Matrix{
 		// Matrix sampleMatrix2 = new Matrix(sampleData2);
 		// sampleMatrix2.setName("Sample Matrix2");
 		// System.out.print(sampleMatrix2);
+	}
 
+	public abstract static class Transform{
+		private String name;
+		
+		public Transform(String name){
+			this.name = name;
+		}
 
+		public String getName(){
+			return this.name;
+		}
+
+		public abstract double transform(double value);
 	}
 }
