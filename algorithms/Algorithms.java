@@ -10,9 +10,9 @@
 package intelligence.algorithms;
 
 public class Algorithms{
-	String name;
-	String description;
-	Algorithm[] algorithmCollection;
+	private String name;
+	private String description;
+	private Algorithm[] algorithmCollection;
 
 	//Constrcutors
 	/** Must have algorithms! */
