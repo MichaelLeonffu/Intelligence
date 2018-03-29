@@ -65,8 +65,10 @@ public class Game{
 				//snake.print();
 				snake.printHeader();
 				for(Entity e: field.getEntities())
-					//if(e.getAnimate())	//If it moves then put it on the log
+					if(e.getAnimate())	//If it moves then put it on the log
 						e.printBody();
+			if(!field.gameRunning())
+					break;
 			//ACTION:
 				field.action();
 			this.cycle++;
@@ -223,6 +225,7 @@ public class Game{
 		return true;
 	}
 
+	//Should make it [][][] so that stacked entities are accounted for.
 	public Entity[][] toEntitySpace(){
 		Entity[][] space = new Entity[this.height][this.width];
 			for(Entity e: this.entities)

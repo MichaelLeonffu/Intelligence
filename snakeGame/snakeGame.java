@@ -11,9 +11,9 @@ import java.util.ArrayList;
 
 public class snakeGame{
 
-	public static final int WIDTH = 7;
-	public static final int HEIGHT = 7;
-	public static final int TIME = 15000;
+	public static final int WIDTH = 8;
+	public static final int HEIGHT = 8;
+	public static final int TIME = 150000;
 
 	public static double averageTrial(ArrayList<Double> trials){
 		if(trials.size() == 0)
@@ -65,7 +65,7 @@ public class snakeGame{
 
 	public static String intro(){
 		return 	"┏━━━━━━━━━━━━━━━━━━━━━━━━━━┓\n" +
-				"┃     Snake Game v0.2.0    ┃\n" +
+				"┃     Snake Game v0.2.1    ┃\n" +
 				"┃                          ┃\n" +
 				"┃       Width:  8          ┃\n" +
 				"┃       Height: 8          ┃\n" +
