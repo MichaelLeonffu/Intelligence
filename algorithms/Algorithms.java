@@ -23,7 +23,7 @@ public class Algorithms{
 		if(!this.uniqueNames(this.algorithmCollection))
 			throw new Exception("Not a unqiue set of names");
 		this.name = "DEFAULT_ALGORITHMS_NAME";
-		this.name = "DEFAULT_ALGORITHMS_DESCRIPTION";
+		this.description = "DEFAULT_ALGORITHMS_DESCRIPTION";
 	}
 
 	public Algorithms(String name, String description, Algorithm...algorithms) throws Exception{
@@ -33,7 +33,7 @@ public class Algorithms{
 		if(!this.uniqueNames(this.algorithmCollection))
 			throw new Exception("Not a unqiue set of names");
 		this.name = name;
-		this.name = description;
+		this.description = description;
 	}
 
 	//Accessor
@@ -64,7 +64,7 @@ public class Algorithms{
 
 	//Misc
 	public String toString(){
-		return "Name: " + this.name + ", " + this.description;
+		return "Name: " + this.name + ": " + this.description;
 	}
 
 	public abstract static class Algorithm{
@@ -97,7 +97,7 @@ public class Algorithms{
 		public abstract double algorithm(double[] input) throws Exception;
 
 		public String toString(){
-			return "Name: " + this.algorithmName + ", " + this.function;
+			return "Name: " + this.algorithmName + ": " + this.function;
 		}
 	}
 
