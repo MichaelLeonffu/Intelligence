@@ -25,13 +25,10 @@ import java.util.Arrays;
 public class Matrix{
 	/** All the data */
 	private double[][] data;
-
 	private String matrixName = "DEFAULT_MATRIX_NAME";
 
 	private ArrayList<String[]> opHistory = new ArrayList<String[]>();
-
 	//I dont like this solution but for now it'll do
-
 	private final String[] OP_DONE = {"OP_DONE"};
 
 	//Constructor
@@ -77,6 +74,12 @@ public class Matrix{
 		this.opHistory.add(this.OP_DONE);
 	}
 
+	/** Make a matrix with values but also a name */
+	public Matrix(double[][] data, String name) throws Exception{
+		this(data);
+		this.matrixName = name;
+	}
+
 	//Mutator
 	/** 
 	*	This should be moved latter or changed. 
@@ -88,6 +91,28 @@ public class Matrix{
 			return false;
 		this.matrixName = newName;
 		return true;
+	}
+
+	/** Overides the data in this Matrix for that of data */
+	public void setData(double[][] data) throws Exception{
+		//Determine if there is any data
+		if(data.length == 0)
+			throw new Exception("no rows found");
+		if(data[0].length == 0)
+			throw new Exception("no columns found");
+		//Determine if matrix is regular, all rows have same number of columns
+		int columnSize = data[0].length;
+		for(int i = 0; i < data.length; i++)
+			if(data[i].length != columnSize)
+				throw new Exception("column size varies by row");
+		//Other wise it should be fine.
+		//Generate our empty data arrray
+		this.data = new double[data.length][columnSize];
+		for(int i = 0; i < data.length; i++)
+			for(int j = 0; j < data[i].length; j++)
+				this.data[i][j] = data[i][j];
+		this.opHistory.add(this.toStringLine());
+		this.opHistory.add(this.OP_DONE);
 	}
 
 	//Accessor
@@ -360,21 +385,25 @@ public class Matrix{
 
 	public static void main(String[] args) throws Exception{
 
-		double[][] sampleData = {{1.0,0.0},{9.0,8.0},{0.0, 9.1}};
+		double[][] sampleData = {
+			{1.0,0.0},
+			{9.0,8.0},
+			{0.0,9.1}
+		};
 		Matrix sampleMatrix = new Matrix(sampleData);
 		sampleMatrix.setName("Sample Matrix");
 		System.out.print(sampleMatrix);
 
-		double[][] sampleData2 = {{1.0,-0.1},{9.0,8.0},{1.0, 1.0}};
-		Matrix sampleMatrix2 = new Matrix(sampleData2);
-		sampleMatrix2.setName("Sample Matrix2");
+		double[][] sampleData2 = {
+			{1.0,-0.1},
+			{9.0, 8.0},
+			{1.0, 1.0}};
+		Matrix sampleMatrix2 = new Matrix(sampleData2, "Sample Matrix2");
 		System.out.print(sampleMatrix2);
 
 		double[][] sampleData3 = Matrix.add(sampleMatrix, sampleMatrix2);
-		Matrix sampleMatrix3 = new Matrix(sampleData3);
-		sampleMatrix3.setName("Sample Matrix3");
+		Matrix sampleMatrix3 = new Matrix(sampleData3, "Sample Matrix3");
 		System.out.print(sampleMatrix3);
-
 
 		sampleMatrix3.addToThis(sampleMatrix);
 		sampleMatrix3.scalarMultiplicationThis(3);
@@ -396,16 +425,6 @@ public class Matrix{
 		sampleMatrix3.transformThis(transformToZero);
 
 		System.out.println(sampleMatrix3.opHistoryToString());
-
-		// double[][] sampleData = {{1.0,0.0},{9.0,8.0}};
-		// Matrix sampleMatrix = new Matrix(sampleData);
-		// sampleMatrix.setName("Sample Matrix");
-		// System.out.print(sampleMatrix);
-
-		// double[][] sampleData2 = {{1.0,-0.1},{9.0,8.0}};
-		// Matrix sampleMatrix2 = new Matrix(sampleData2);
-		// sampleMatrix2.setName("Sample Matrix2");
-		// System.out.print(sampleMatrix2);
 	}
 
 	public abstract static class Transform{
