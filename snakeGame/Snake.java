@@ -27,50 +27,15 @@ public class Snake extends Entity{
 	public Snake(Point point){
 		super("Snake_Head", 's', new Point(point), true, true, 0, 1, 0);
 		super.setExist(false);
-		//this.position = new Point(point);
-	}
-
-	public boolean action(Game field){
-		this.path.add(0, super.getPoint());	//Add to front of the list.
-		if(move(snakeBrain(field))){
-			//move tail if any, has tail if path.size() is fitness + 2 since one size is ghost tail;
-			//fitness 0; means no tail; but means 1 ghost; so size should be 1
-			//if(this.path.size() - super.getFitness() > 1)	//if there are any tails to move.
-			for(int i = 0; i < this.tail.size(); i++)//For as many tails that are there, move them
-				this.tail.get(i).setPoint(this.path.get(i));
-			//I could have just made "path" into tail, and spawn a new tail for every turn
-			//But for now i want each tail to survie as if it was a real snake
-			return true;
-		}
-		return false;
-	}
-
-	public boolean upkeep(Game field){
-		//I dont like this solution:
-		tempFit = super.getFitness();
-		for(Entity e: field.getEntities())
-			if(e.getPoint().equals(this.getPoint()))	//Getting all things on the same spot
-				if(e instanceof Apple)	//if it is an apple
-					super.setFitness(super.getFitness() + 1);
-		if(tempFit == super.getFitness()){	//same fitness, not eat apple
-			if(this.path.size() >= 1)	//first move
-				this.path.remove(this.path.size() - 1);
-		}else{	//Eats an apple
-			//Snake ate apple; that means it gains a tail, at furthest position.
-			Tail tempTailName = new Tail(this.path.get(this.path.size() - 1));
-			this.tail.add(this.tail.size(), tempTailName);	//Add this to the end of the list though.
-			field.addSpawnQueue(tempTailName);	//Adds to the game.
-		}
-		return true;
 	}
 
 	public boolean spawn(Game game){
-		//do nothing
+		//Do nothing
 		return true;
 	}
 
 	public boolean relocate(Game game){
-		//Moves apple to "vaid" location then makes apple exist again
+		//Moves snake to "vaid" location then makes snake exist again
 		ArrayList<Entity> validSpace = new ArrayList<Entity>();
 		for(Entity[] manyE: game.toEntitySpace())
 			for(Entity e: manyE)
@@ -81,26 +46,106 @@ public class Snake extends Entity{
 		Collections.shuffle(validSpace);
 		if(!super.setExist(true))	//if the method returns false that means an apple exists and there is a problem
 			return false;
-		super.setPoint(new Point(validSpace.get(0).getPoint()));	//move apple
+		super.setPoint(new Point(validSpace.get(0).getPoint()));
 		return true;
 	}
 
-	private int snakeBrainSmart(Game field){
+	public boolean upkeep(Game game){
+		//I dont like this solution:
+		tempFit = super.getFitness();
+		for(Entity e: game.getEntities())
+			if(e.getPoint().equals(this.getPoint()))	//Getting all things on the same spot
+				if(e instanceof Apple)	//if it is an apple
+					super.setFitness(super.getFitness() + 1);
+		if(tempFit == super.getFitness()){	//same fitness, not eat apple
+			if(this.path.size() >= 1)	//first move
+				this.path.remove(this.path.size() - 1);
+		}else{	//Ate an apple
+			//Snake ate apple; that means it gains a tail, at furthest position.
+			Tail tempTailName = new Tail(this.path.get(this.path.size() - 1));
+			this.tail.add(this.tail.size(), tempTailName);	//Add this to the end of the list though.
+			game.addSpawnQueue(tempTailName);	//Sets snake to spawn
+		}
+		return true;
+	}
+
+	public boolean action(Game game){
+		this.path.add(0, super.getPoint());	//Add current position to front of the path list.
+		if(move(snakeBrainSafe(game))){
+			for(int i = 0; i < this.tail.size(); i++)//For as many tails that are there, move them
+				this.tail.get(i).setPoint(this.path.get(i));
+			return true;
+		}
+		return false;
+	}
+
+	/** Asume field is only made up of walls and nothing inside.*/
+	private int snakeBrainSafe(Game game){
+		Entity[][] entitySpace = game.toEntitySpace();
+		//If at bottom right side
+		if(entitySpace.length > super.getPoint().y - 1 && super.getPoint().y >= 0)										//If in range of Y-1
+			if(entitySpace[super.getPoint().y - 1].length > super.getPoint().x + 0 && super.getPoint().x >= 0)			//If in range of x
+				if(entitySpace[super.getPoint().y - 1][super.getPoint().x + 0].getPrecedence() > super.getPrecedence())	//If bottom side is high prec
+					if(!(entitySpace[super.getPoint().y - 1][super.getPoint().x + 0] instanceof Tail))					//If bottom side is NOT tail
+						if(entitySpace.length > super.getPoint().y + 0 && super.getPoint().y >= 0)										//If in range of Y
+							if(entitySpace[super.getPoint().y + 0].length > super.getPoint().x + 1 && super.getPoint().x >= 0)			//If in range of x+1
+								if(entitySpace[super.getPoint().y + 0][super.getPoint().x + 1].getPrecedence() > super.getPrecedence())	//If bottom right side is high prec
+									return 0; //move up
+		//If at bottom side
+		if(entitySpace.length > super.getPoint().y - 1 && super.getPoint().y >= 0)										//If in range of Y-1
+			if(entitySpace[super.getPoint().y - 1].length > super.getPoint().x + 0 && super.getPoint().x >= 0)			//If in range of x
+				if(!(entitySpace[super.getPoint().y - 1][super.getPoint().x + 0] instanceof Tail))					//If bottom side is NOT tail
+					if(entitySpace[super.getPoint().y - 1][super.getPoint().x + 0].getPrecedence() > super.getPrecedence())	//If bottom side is high prec
+						return 1;	//Move rightward.
+		//If at top side and even
+		if(entitySpace.length > super.getPoint().y + 0 && super.getPoint().y >= 0)										//If in range of Y
+			if(entitySpace[super.getPoint().y + 0].length > super.getPoint().x + 0 && super.getPoint().x >= 0)			//If in range of x
+				if(super.getPoint().x % 2 == 0)
+					if(entitySpace.length > super.getPoint().y + 1 && super.getPoint().y >= 0)										//If in range of Y+1
+						if(entitySpace[super.getPoint().y + 1].length > super.getPoint().x + 0 && super.getPoint().x >= 0)			//If in range of x
+							if(!(entitySpace[super.getPoint().y + 1][super.getPoint().x + 0] instanceof Tail))					//If bottom side is NOT tail	
+								if(entitySpace[super.getPoint().y + 1][super.getPoint().x + 0].getPrecedence() > super.getPrecedence())	//If top side is high prec
+									return 3;	//Move leftward.
+		//If on even
+		if(entitySpace.length > super.getPoint().y + 0 && super.getPoint().y >= 0)										//If in range of Y
+			if(entitySpace[super.getPoint().y + 0].length > super.getPoint().x + 0 && super.getPoint().x >= 0)			//If in range of x
+				if(super.getPoint().x % 2 == 0)																			//If even
+					return 0;	//Move upward.
+		//If on odd and "NEAR" bottom side and not on left wall
+		if(entitySpace.length > super.getPoint().y - 2 && super.getPoint().y >= 0)										//If in range of Y-2
+			if(entitySpace[super.getPoint().y - 2].length > super.getPoint().x + 0 && super.getPoint().x >= 0)			//If in range of x
+				if(entitySpace[super.getPoint().y - 2][super.getPoint().x + 0].getPrecedence() > super.getPrecedence() && !(entitySpace[super.getPoint().y - 2][super.getPoint().x + 0] instanceof Tail))	//If bottom side is high prec and not tail
+					if(entitySpace.length > super.getPoint().y + 0 && super.getPoint().y >= 0)										//If in range of Y
+						if(entitySpace[super.getPoint().y + 0].length > super.getPoint().x + 0 && super.getPoint().x >= 0)			//If in range of x
+							if(super.getPoint().x % 2 == 1)																			//If Odd
+								if(entitySpace.length > super.getPoint().y + 0 && super.getPoint().y >= 0)										//If in range of Y-1
+									if(entitySpace[super.getPoint().y + 0].length > super.getPoint().x - 1 && super.getPoint().x >= 0)			//If in range of x
+										if(!(entitySpace[super.getPoint().y + 0][super.getPoint().x - 1].getPrecedence() > super.getPrecedence()))	//If bottom side is high prec
+											return 3;	//Move left.
+		//If on odd
+		if(entitySpace.length > super.getPoint().y + 0 && super.getPoint().y >= 0)										//If in range of Y
+			if(entitySpace[super.getPoint().y + 0].length > super.getPoint().x + 0 && super.getPoint().x >= 0)			//If in range of x
+				if(super.getPoint().x % 2 == 1)																			//If Odd
+					return 2;	//Move downward.
+		return -1;	//Dont move.
+	}
+
+	private int snakeBrainSmart(Game game){
 		Point apple = new Point();
-		for(Entity e: field.getEntities())
+		for(Entity e: game.getEntities())
 			if(e instanceof Apple)	//if it is an apple
 				apple = new Point(e.getPoint());
 		if(apple.equals(new Point()))	//apple seems to not exist
-			return snakeBrain(field);
-		if(apple.getY() > super.getPoint().getY())
+			return snakeBrain(game);
+		if(apple.y > super.getPoint().y)
 			return 0;
-		if(apple.getX() > super.getPoint().getX())
+		if(apple.x > super.getPoint().x)
 			return 1;
-		if(apple.getY() < super.getPoint().getY())
+		if(apple.y < super.getPoint().y)
 			return 2;
-		if(apple.getX() < super.getPoint().getX())
+		if(apple.x < super.getPoint().x)
 			return 3;
-		return snakeBrain(field);	//incase there is no apple (snake is on apple?)
+		return snakeBrain(game);	//incase there is no apple (snake is on apple?)
 	}
 
 	//This is where the algorithms go; for now it'll be a random stay alive.
@@ -151,20 +196,19 @@ public class Snake extends Entity{
 			return false;
 		switch(direction){
 			case 0:
-				// super.setY(super.getPoint().getY() + 1);
-				super.setPoint(new Point(super.getPoint().getX(), super.getPoint().getY()+1));
+				super.setPoint(new Point(super.getPoint().x+0, super.getPoint().y+1));
 				break;
 			case 1:
-				super.setPoint(new Point(super.getPoint().getX()+1, super.getPoint().getY()));
-				// super.setX(super.getPoint().getX() + 1);
+				super.setPoint(new Point(super.getPoint().x+1, super.getPoint().y+0));
 				break;
 			case 2:
-				super.setPoint(new Point(super.getPoint().getX(), super.getPoint().getY()-1));
-				// super.setY(super.getPoint().getY() - 1);
+				super.setPoint(new Point(super.getPoint().x+0, super.getPoint().y-1));
 				break;
 			case 3:
-				super.setPoint(new Point(super.getPoint().getX()-1, super.getPoint().getY()));
-				// super.setX(super.getPoint().getX() - 1);
+				super.setPoint(new Point(super.getPoint().x-1, super.getPoint().y+0));
+				break;
+			case -1:
+				super.setPoint(new Point(super.getPoint().x+0, super.getPoint().y+0));
 				break;
 			default:
 				return false;
@@ -181,7 +225,7 @@ public class Snake extends Entity{
 		}
 
 		public boolean spawn(Game game){
-			//Snake spawns in when created.
+			//Tail spawns in when created.
 			game.addEntity(this);	//Add this tail to the game
 			return true;
 		}
@@ -191,13 +235,13 @@ public class Snake extends Entity{
 			return true;
 		}
 
-		public boolean action(Game field){
-			//I think its best if we dont use the game field.
+		public boolean action(Game game){
+			//I think its best if we dont use the action for each snake.
 			return true;
 		}
 
-		public boolean upkeep(Game field){
-			//Doesn't really upkeep, its more of a child entity.
+		public boolean upkeep(Game game){
+			//Doesn't really upkeep.
 			return true;
 		}
 
