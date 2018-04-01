@@ -3,8 +3,8 @@
 *	Algorithms.
 *	
 *	@author Michael Leonffu
-*	@version v0.3.1-alpha
-*	@since v0.3.1-alpha
+*	@version v0.3.2-alpha
+*	@since v0.3.2-alpha
 *
 */
 package intelligence.algorithms;
