@@ -3,8 +3,8 @@
 *	Sigmoid. https://en.wikipedia.org/wiki/Sigmoid_function
 *	
 *	@author Michael Leonffu
-*	@version v0.3.0-alpha
-*	@since v0.3.0-alpha
+*	@version v0.3.5-alpha
+*	@since v0.3.1-alpha
 *
 */
 package intelligence.algorithms;
@@ -33,6 +33,17 @@ public class Sigmoid extends Algorithms{
 					//S'(x) = e^x/(e^x + 1)^2 logisic sigmoid
 
 					return Math.pow(Math.E, input[0])/(Math.pow((Math.pow(Math.E, input[0]) + 1), 2));
+				}
+			},
+			new Algorithm("tanh", "hyperbolic tangent"){
+				public double algorithm(double[] input) throws Exception{
+					if(input.length != 1) //this algorithm only accepts one input
+						throw new Exception("tanh only accepts one input");
+
+					//A type of sigmoid function hyperbolic tangent
+					//(e^x - e^-x)/(e^x - e^-x) or tanhx
+
+					return Math.tanh(input[0]);
 				}
 			}
 		);

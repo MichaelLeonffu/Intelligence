@@ -3,7 +3,7 @@
 *	Matrix.
 *	
 *	@author Michael Leonffu
-*	@version v0.3.0-alpha
+*	@version v0.3.5-alpha
 *	@since v0.3.0-alpha
 *
 */
@@ -45,6 +45,18 @@ public class Matrix{
 		this.opHistory.add(this.OP_DONE);
 	}
 
+	/** Makes an ididnty matrix */
+	public Matrix(int size) throws Exception{
+		if(size <= 0)
+			throw new Exception("invalid size of matrix");
+		this.data = new double[size][size];
+		for(int i = 0; i < size; i++)
+			for(int j = 0; j < size; j++)
+				this.data[i][j] = i == j? 1: 0;
+		this.opHistory.add(this.toStringLine());
+		this.opHistory.add(this.OP_DONE);
+	}
+
 	/** Generating a matrix using a 2D array */
 	public Matrix(double[][] data) throws Exception{
 		//Determine if there is any data
@@ -70,6 +82,23 @@ public class Matrix{
 	/** Copy Matrix data to make this Matrix. */
 	public Matrix(Matrix matrix) throws Exception{
 		this(matrix.data);
+		this.opHistory.add(this.toStringLine());
+		this.opHistory.add(this.OP_DONE);
+	}
+
+	/** Give it a name as well */
+	public Matrix(Matrix matrix, String name) throws Exception{
+		this(matrix.data);
+		this.matrixName = name;
+		this.opHistory.add(this.toStringLine());
+		this.opHistory.add(this.OP_DONE);
+	}
+
+	/** Copy Matrix data to make this Matrix with hisotry. */
+	public Matrix(Matrix matrix, boolean history) throws Exception{
+		this(matrix.data);
+		if(history)
+			this.opHistory = matrix.opHistory;
 		this.opHistory.add(this.toStringLine());
 		this.opHistory.add(this.OP_DONE);
 	}
@@ -302,7 +331,7 @@ public class Matrix{
 		for(int i = 0; i < this.getRows(); i++){
 			finalString[i+1] = "[";
 			for(double value: data[i]){
-				finalString[i+1] += String.format("%8.2f,", value);
+				finalString[i+1] += String.format("%6.2f,", value);
 			}
 			finalString[i+1] = finalString[i+1].substring(0, finalString[i+1].length()-1) + "]";
 		}
@@ -356,7 +385,7 @@ public class Matrix{
 		}
 		return finalString;
 	}
-
+	
 	public String toString(){
 		String finalString = "";
 		finalString += this.matrixName + ": " + this.data.length + "x" + this.data[0].length + "\n";
@@ -425,19 +454,5 @@ public class Matrix{
 		sampleMatrix3.transformThis(transformToZero);
 
 		System.out.println(sampleMatrix3.opHistoryToString());
-	}
-
-	public abstract static class Transform{
-		private String name;
-		
-		public Transform(String name){
-			this.name = name;
-		}
-
-		public String getName(){
-			return this.name;
-		}
-
-		public abstract double transform(double value);
 	}
 }
